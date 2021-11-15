@@ -1,0 +1,58 @@
+@startuml
+class InventoryManagementApplication{
+    +start()
+}
+
+class InventoryManagementApplicationController{
+    +initialize()
+}
+
+InventoryManagementApplication --o InventoryManagementApplicationController
+
+class Item{
+    -serialNumber
+    -name
+    -monetaryValue
+    +Item()
+    +getSerialNumber():String
+    +getName():String
+    +getMonetaryValue():String
+    +setSerialNumber(String)
+    +setName(String)
+    +setMonetaryValue(String)
+}
+
+InventoryManagementApplicationController --o Item
+
+class ItemList{
+    -mainList
+    -size
+    +ItemList()
+    +addItem(Item)
+    +removeItem(int)
+    +getList():ObservableList<Item>
+}
+
+InventoryManagementApplicationController --o ItemList
+
+class FileIO{
+    +writeHTML(String)
+    +readHTML():String
+    +writeJson(String)
+    +readJson():String
+    +writeTSV()(String)
+    +readTSV(String)
+}
+
+InventoryManagementApplicationController --o FileIO
+
+class ParseTyping{
+    +enforceSerialNumber(String):boolean
+    +enforceName(String):boolean
+    +enforceMonetaryValue(String):boolean
+    +searchSerial(String):boolean
+    +searchName(String):boolean
+}
+
+InventoryManagementApplicationController --o ParseTyping
+@enduml

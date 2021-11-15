@@ -24,13 +24,13 @@
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="202.0" prefWidth="727.0">
          <children>
-            <Button layoutX="326.0" layoutY="24.0" mnemonicParsing="false" text="Add" />
+            <Button layoutX="326.0" layoutY="11.0" mnemonicParsing="false" text="Add" />
             <Button layoutX="14.0" layoutY="12.0" mnemonicParsing="false" text="Remove Selected" />
             <Button layoutX="127.0" layoutY="12.0" mnemonicParsing="false" text="Remove All" />
-            <TextField layoutX="326.0" layoutY="91.0" />
-            <TextField layoutX="326.0" layoutY="56.0" />
-            <TextField layoutX="326.0" layoutY="125.0" />
-            <TextField layoutX="169.0" layoutY="91.0" />
+            <TextField layoutX="326.0" layoutY="97.0" promptText="2-256 Characters" />
+            <TextField layoutX="326.0" layoutY="56.0" promptText="A-XXX-XXX-XXX" />
+            <TextField layoutX="326.0" layoutY="137.0" promptText="U.S. Dollars" />
+            <TextField layoutX="169.0" layoutY="91.0" promptText="Search for an Item..." />
             <Button layoutX="218.0" layoutY="125.0" mnemonicParsing="false" text="Search" />
             <RadioButton layoutX="169.0" layoutY="51.0" mnemonicParsing="false" text="Search by Serial Number">
                <toggleGroup>
@@ -38,10 +38,13 @@
                </toggleGroup>
             </RadioButton>
             <RadioButton layoutX="169.0" layoutY="69.0" mnemonicParsing="false" text="Search by Name" toggleGroup="$SearchGroup" />
-            <Button layoutX="375.0" layoutY="24.0" mnemonicParsing="false" text="Edit Selected" />
+            <Button layoutX="375.0" layoutY="12.0" mnemonicParsing="false" text="Edit Selected" />
             <Label focusTraversable="false" layoutX="169.0" layoutY="39.0" prefHeight="42.0" prefWidth="149.0" text="Label" textFill="RED" visible="false" />
             <Button layoutX="14.0" layoutY="65.0" mnemonicParsing="false" text="Save As..." />
             <Button layoutX="14.0" layoutY="104.0" mnemonicParsing="false" text="Load Inventory" />
+            <Label layoutX="363.0" layoutY="40.0" prefHeight="5.0" prefWidth="76.0" text="Serial Number" />
+            <Label layoutX="371.0" layoutY="82.0" text="Item Name" />
+            <Label layoutX="359.0" layoutY="120.0" text="Monetary Value" />
          </children></AnchorPane>
   </items>
 </SplitPane>
