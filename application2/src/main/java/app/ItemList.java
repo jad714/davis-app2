@@ -35,6 +35,11 @@ public class ItemList {
         return mainList.get(index);
     }
 
+    public void setItem(int index, Item item){
+        // Sets the item to the item created.
+        mainList.set(index, item);
+    }
+
     public int getSize(){
         // Return the size of the list.
         return this.size;

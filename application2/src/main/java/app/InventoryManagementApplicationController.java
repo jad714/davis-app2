@@ -12,9 +12,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Region;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 
 import static javafx.geometry.Pos.CENTER;
@@ -92,14 +98,83 @@ public class InventoryManagementApplicationController {
 
     @FXML
     public void saveAsButtonPressed(ActionEvent event){
+        event.consume();
+        if(itemList.isListEmpty()){
+            // Shows an error.
+            return;
+        }
+        FileIO save = new FileIO();
         // Calls up the appropriate save method according to the specified file type specified by the user
+        Stage saveStage = new Stage();
+        // Set up the file chooser and any and all extension filters.
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("(TSV File)", "*.txt");
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("(.json File)", "*.json");
+        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("(.html File)", "*.html");
+        fileChooser.getExtensionFilters().add(txtFilter);
+        fileChooser.getExtensionFilters().add(jsonFilter);
+        fileChooser.getExtensionFilters().add(htmlFilter);
+        File file = fileChooser.showSaveDialog(saveStage);
+        if(file!=null){
+            if(file.getPath().contains(".html")){
+                // If an html file is selected, call this method.
+                String content = save.prepHTML(itemList);
+                save.writeFile(content, file);
+            }
+            else if(file.getPath().contains(".json")){
+                // If a .json file is selected, call this method.
+                save.writeJson(file, itemList);
+            }
+            else{
+                // Process of elimination says TSV.
+                save.writeTSV(file, itemList);
+            }
+        }
         // in the FileChooser (which is also created by this method).
     }
 
     @FXML
     public void editSelectedButtonPressed(ActionEvent event){
+        event.consume();
+        if(table.selectionModelProperty().getValue().isEmpty()){
+            // Display an error.
+            return;
+        }
+        ParseTyping parseTyping = new ParseTyping();
         // Applies the edits in the text boxes to the selected item in the TableView.
+        boolean isSerialFilled = serialNumber.getText()!=null;
+        boolean isNameFilled = itemName.getText()!=null;
+        boolean isMonetaryValueFilled = monetaryValue.getText()!=null;
+        String serial = "";
+        String name = "";
+        String monetary = "";
         // Ignores blank inputs (to allow individual edits, and also because no field has a valid blank input).
+        if(isSerialFilled && isNameFilled && isMonetaryValueFilled){
+            serial = serial.concat(serialNumber.getText());
+            if(!parseTyping.enforceSerialNumber(serial)){
+                // display error
+                return;
+            }
+            name = name.concat(itemName.getText());
+            if(!parseTyping.enforceName(name)){
+                // display error
+                return;
+            }
+            monetary = monetary.concat(monetaryValue.getText());
+            if(!parseTyping.enforceMonetaryValue(monetary)){
+                // display error
+                return;
+            }
+            Double doubleValue = Double.parseDouble(monetary);
+            monetary = NumberFormat.getCurrencyInstance(new Locale("en", "US")).format(doubleValue);
+        }
+
+        int index = table.getSelectionModel().getSelectedIndex();
+        Item replacementItem = new Item("","","");
+        replacementItem.setSerialNumber(serial);
+        replacementItem.setName(name);
+        replacementItem.setMonetaryValue(monetary);
+        itemList.setItem(index, replacementItem);
         // If all fields are blank, will display an error.
     }
 
@@ -139,7 +214,6 @@ public class InventoryManagementApplicationController {
             System.err.println("PING 2!"); // REMOVE BEFORE FLIGHT!
             return;
         }
-        value = "$";
         String preValue = monetaryValue.getText();
         if(!typeCheck.enforceMonetaryValue(preValue)){
             // an error will be displayed.
@@ -147,9 +221,8 @@ public class InventoryManagementApplicationController {
             return;
         }
         // Convert the value to the appropriate format.
-        double doubleValue = Double.parseDouble(preValue);
-        doubleValue = Math.round(doubleValue*100.0)/100.0;
-        value = value.concat(String.valueOf(doubleValue));
+        Double doubleValue = Double.parseDouble(preValue);
+        value = NumberFormat.getCurrencyInstance(new Locale("en", "US")).format(doubleValue);
         // Otherwise the value will be added to the list.
         Item newItem = new Item(serial, name, value);
         itemList.addItem(newItem);
