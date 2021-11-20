@@ -11,35 +11,38 @@ public class Item {
     private String monetaryValue;
     public Item(String serialNumber, String name, String monetaryValue){
         // Initialize the item with passed values.
+        this.serialNumber = serialNumber;
+        this.name = name;
+        this.monetaryValue = monetaryValue;
     }
 
     public String getSerialNumber(){
         // Returns the requested String.
-
+        return this.serialNumber;
     }
 
     public String getName(){
         // Returns the requested String.
-
+        return this.name;
     }
 
     public String getMonetaryValue(){
         // Returns the requested String.
-
+        return this.monetaryValue;
     }
 
     public void setSerialNumber(String newSerialNumber){
         // Changes the referenced String to passed value.
-        // First passes to ParseTyping method to verify validity.
+        this.serialNumber = newSerialNumber;
     }
 
     public void setName(String newName){
         // Changes the referenced String to passed value.
-        // First passes to ParseTyping method to verify validity.
+        this.name = newName;
     }
 
     public void setMonetaryValue(String newValue){
         // Changes the referenced String to passed value.
-        // First passes to ParseTyping method to verify validity.
+        this.monetaryValue = newValue;
     }
 }

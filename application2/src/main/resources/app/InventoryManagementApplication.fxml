@@ -10,41 +10,42 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<SplitPane dividerPositions="0.710387323943662" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="580.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.710387323943662" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="689.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.InventoryManagementApplicationController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
-            <TableView prefHeight="407.0" prefWidth="492.0">
+            <TableView fx:id="table" prefHeight="485.0" prefWidth="492.0">
               <columns>
-                <TableColumn prefWidth="165.19996047019958" text="Serial Number" />
-                <TableColumn minWidth="0.0" prefWidth="160.0000457763672" text="Item Name" />
-                  <TableColumn prefWidth="164.800048828125" text="Monetary Value" />
+                <TableColumn fx:id="serialColumn" prefWidth="165.19996047019958" text="Serial Number" />
+                <TableColumn fx:id="nameColumn" minWidth="0.0" prefWidth="160.0000457763672" text="Item Name" />
+                  <TableColumn fx:id="valueColumn" prefWidth="164.800048828125" text="Monetary Value" />
               </columns>
             </TableView>
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="202.0" prefWidth="727.0">
          <children>
-            <Button layoutX="326.0" layoutY="11.0" mnemonicParsing="false" text="Add" />
-            <Button layoutX="14.0" layoutY="12.0" mnemonicParsing="false" text="Remove Selected" />
-            <Button layoutX="127.0" layoutY="12.0" mnemonicParsing="false" text="Remove All" />
-            <TextField layoutX="326.0" layoutY="97.0" promptText="2-256 Characters" />
-            <TextField layoutX="326.0" layoutY="56.0" promptText="A-XXX-XXX-XXX" />
-            <TextField layoutX="326.0" layoutY="137.0" promptText="U.S. Dollars" />
-            <TextField layoutX="169.0" layoutY="91.0" promptText="Search for an Item..." />
-            <Button layoutX="218.0" layoutY="125.0" mnemonicParsing="false" text="Search" />
-            <RadioButton layoutX="169.0" layoutY="51.0" mnemonicParsing="false" text="Search by Serial Number">
+            <Button layoutX="326.0" layoutY="11.0" mnemonicParsing="false" onAction="#addButtonPressed" text="Add" />
+            <Button layoutX="14.0" layoutY="12.0" mnemonicParsing="false" onAction="#removeSelectedPressed" text="Remove Selected" />
+            <Button layoutX="127.0" layoutY="12.0" mnemonicParsing="false" onAction="#removeAllButtonPressed" text="Remove All" />
+            <TextField fx:id="itemName" layoutX="326.0" layoutY="97.0" promptText="2-256 Characters" />
+            <TextField fx:id="serialNumber" layoutX="326.0" layoutY="56.0" promptText="A-XXX-XXX-XXX" />
+            <TextField fx:id="monetaryValue" layoutX="326.0" layoutY="137.0" promptText="U.S. Dollars" />
+            <TextField layoutX="170.0" layoutY="104.0" promptText="Search for an Item..." />
+            <Button layoutX="218.0" layoutY="137.0" mnemonicParsing="false" text="Search" />
+            <RadioButton layoutX="170.0" layoutY="60.0" mnemonicParsing="false" text="Search by Serial Number">
                <toggleGroup>
                   <ToggleGroup fx:id="SearchGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton layoutX="169.0" layoutY="69.0" mnemonicParsing="false" text="Search by Name" toggleGroup="$SearchGroup" />
+            <RadioButton layoutX="170.0" layoutY="81.0" mnemonicParsing="false" text="Search by Name" toggleGroup="$SearchGroup" />
             <Button layoutX="375.0" layoutY="12.0" mnemonicParsing="false" text="Edit Selected" />
-            <Label focusTraversable="false" layoutX="169.0" layoutY="39.0" prefHeight="42.0" prefWidth="149.0" text="Label" textFill="RED" visible="false" />
+            <Label focusTraversable="false" layoutX="4.0" layoutY="150.0" prefHeight="42.0" prefWidth="149.0" text="Label" textFill="RED" visible="false" />
             <Button layoutX="14.0" layoutY="65.0" mnemonicParsing="false" text="Save As..." />
             <Button layoutX="14.0" layoutY="104.0" mnemonicParsing="false" text="Load Inventory" />
             <Label layoutX="363.0" layoutY="40.0" prefHeight="5.0" prefWidth="76.0" text="Serial Number" />
             <Label layoutX="371.0" layoutY="82.0" text="Item Name" />
             <Label layoutX="359.0" layoutY="120.0" text="Monetary Value" />
+            <Label layoutX="14.0" layoutY="129.0" prefHeight="17.0" prefWidth="126.0" text="Errors / Messages:" />
          </children></AnchorPane>
   </items>
 </SplitPane>

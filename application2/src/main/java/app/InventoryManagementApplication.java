@@ -18,9 +18,14 @@ public class InventoryManagementApplication extends Application {
     @Override
     public void start(Stage initStage) throws Exception{
         // Set root to the FXML file.
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("InventoryManagementApplication.fxml")));
         // Set up a new scene.
+        Scene myScene = new Scene(root);
         // Title the scene.
+        initStage.setTitle("Inventory Manager");
         // Start up the GUI.
+        initStage.setScene(myScene);
+        initStage.show();
     }
 
 }
