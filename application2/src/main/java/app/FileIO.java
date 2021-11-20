@@ -22,7 +22,11 @@ public class FileIO {
         String output = "<table>\n\t<th>Serial Number</th><th>Name</th><th>Monetary Value</th>\n\t";
         // Modifies the String to be written in HTML format.
         for(int i=0;i<list.getSize();i++){
-            output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + "</td><td>" + list.getItem(i).getName() + "</td><td>" + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>");
+            if(i+1 == list.getSize()){
+                output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + "</td><td>" + list.getItem(i).getName() + "</td><td>" + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>");
+                break;
+            }
+            output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + "</td><td>" + list.getItem(i).getName() + "</td><td>" + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>\n\t");
         }
         output = output.concat("\n</table>");
         return output;
@@ -140,35 +144,34 @@ public class FileIO {
     public void readTSV(File file, ItemList list){
         // Converts the data in the TSV file to one useable by the program.
         boolean isFirstRun = true;
-        String skip;
         String data;
-        String[] objectInfo = new String[3];
+        String[] objectInfo;
         try{
             Scanner fileScanner = new Scanner(file);
             // Skip the first line of information (Table Headers)
             while(fileScanner.hasNextLine()){
                 if(isFirstRun){
-                    skip = fileScanner.nextLine();
+                    fileScanner.nextLine();
                     isFirstRun = false;
                 }
                 // Removes the tabs from the input and returns the information for further processing.
                 data = fileScanner.nextLine();
                 objectInfo = data.split("\\t");
-                objectInfo[2] = objectInfo[2].replace("\n", "");
+                objectInfo[2] = objectInfo[2].replace("%n", "");
                 Item newItem = new Item(objectInfo[0], objectInfo[1], objectInfo[2]);
                 list.addItem(newItem);
-                fileScanner.close();
             }
+            fileScanner.close();
         }
         catch(IOException e){
             System.err.println("Something's wrong with the FileChooser!");
             e.printStackTrace();
             System.exit(0);
         }
-
     }
 
-    public void writeFile(String output, File file){
+    public void writeHTML(String output, File file){
+        /* This method specifically writes the prepped HTML file, as it is complex to prep. */
         try{
             // Create a new instance of the PrintWriter Class to write the output file.
             PrintWriter fileWriter = new PrintWriter(file);

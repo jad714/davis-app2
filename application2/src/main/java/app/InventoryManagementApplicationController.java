@@ -12,16 +12,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static javafx.geometry.Pos.CENTER;
 import static javafx.scene.control.TableColumn.SortType.DESCENDING;
@@ -32,7 +30,9 @@ public class InventoryManagementApplicationController {
     ItemList itemList = new ItemList();
     FilteredList<Item> filteredItems = new FilteredList<>(itemList.getList(), p->true);
     SortedList<Item> sortedList = new SortedList<>(filteredItems);
+    // The "usedNumbers" list keeps track of any serial numbers added to the list. If any of those numbers match existing ones, input will be rejected.
     HashSet<String> usedNumbers = new HashSet<>();
+    private int radioSelected = 1; // The top radio button is initially selected, so this will be 1 by default.
 
     @FXML
     private RadioButton searchBySerial;
@@ -59,11 +59,81 @@ public class InventoryManagementApplicationController {
 
 
     /* Initialize all buttons and controls for the Application and define associated behaviors, as well as sorting behaviors. */
+    private Comparator<String> getComparator(){
+        // This method returns the comparator that allows for the sorting of monetary values! (Proud of this one).
+        // Cannot be very easily tested, but result is easily confirmed within the program's operation.
+        return (String value1, String value2) -> {
+            value1 = value1.replace("$", "");
+            value2 = value2.replace("$", "");
+            value1 = value1.replace(",", "");
+            value2 = value2.replace(",", "");
+            double doubleValue1 = Double.parseDouble(value1);
+            double doubleValue2 = Double.parseDouble(value2);
+            return Double.compare(doubleValue1, doubleValue2);
+        };
+    }
+/*
+    public boolean isUsed(){
+
+    }
+*/
+    private void displayError(int type){
+        switch (type) {
+            case 1 -> {
+                feedbackLabel.setTextFill(Paint.valueOf(RED));
+                feedbackLabel.setText("Add/Edit Error: SN is of wrong format!");
+                feedbackLabel.setWrapText(true);
+                feedbackLabel.setVisible(true);
+            }
+            case 2 -> {
+                feedbackLabel.setTextFill(Paint.valueOf(RED));
+                feedbackLabel.setText("Add/Edit Error: SN already exists! Use a different one.");
+                feedbackLabel.setWrapText(true);
+                feedbackLabel.setVisible(true);
+            }
+            case 3 -> {
+                feedbackLabel.setTextFill(Paint.valueOf(RED));
+                feedbackLabel.setText("Add/Edit Error: Name must be 2-256 characters!");
+                feedbackLabel.setWrapText(true);
+                feedbackLabel.setVisible(true);
+            }
+            case 4 -> {
+                feedbackLabel.setTextFill(Paint.valueOf(RED));
+                feedbackLabel.setText("Add/Edit Error: Monetary value must be numeric!");
+                feedbackLabel.setWrapText(true);
+                feedbackLabel.setVisible(true);
+            }
+            case 5 -> {
+                feedbackLabel.setTextFill(Paint.valueOf(RED));
+                feedbackLabel.setText("Search Error: Value not found!");
+                feedbackLabel.setWrapText(true);
+                feedbackLabel.setVisible(true);
+            }
+            case 6 -> {
+                feedbackLabel.setTextFill(Paint.valueOf(RED));
+                feedbackLabel.setText("Add/Edit Error: All fields must be filled!");
+                feedbackLabel.setWrapText(true);
+                feedbackLabel.setVisible(true);
+            }
+            default -> feedbackLabel.setVisible(false);
+        }
+    }
+
+    private void clearMessages(){
+        feedbackLabel.setVisible(false);
+    }
 
     @FXML
     public void radioButtons(ActionEvent event){
         // Dictate the behavior of the radio buttons.
+        event.consume();
         // The radio buttons will specify the search field's controlling method.
+        if(searchBySerial.isSelected()){
+            radioSelected = 1;
+        }
+        else if(searchByName.isSelected()){
+            radioSelected = 0;
+        }
     }
 
     @FXML
@@ -119,7 +189,7 @@ public class InventoryManagementApplicationController {
             if(file.getPath().contains(".html")){
                 // If an html file is selected, call this method.
                 String content = save.prepHTML(itemList);
-                save.writeFile(content, file);
+                save.writeHTML(content, file);
             }
             else if(file.getPath().contains(".json")){
                 // If a .json file is selected, call this method.
@@ -130,7 +200,6 @@ public class InventoryManagementApplicationController {
                 save.writeTSV(file, itemList);
             }
         }
-        // in the FileChooser (which is also created by this method).
     }
 
     @FXML
@@ -151,27 +220,38 @@ public class InventoryManagementApplicationController {
         // Ignores blank inputs (to allow individual edits, and also because no field has a valid blank input).
         if(isSerialFilled && isNameFilled && isMonetaryValueFilled){
             serial = serial.concat(serialNumber.getText());
-            if(!parseTyping.enforceSerialNumber(serial)){
-                // display error
+            if(!parseTyping.enforceSerialNumber(serial) || usedNumbers.contains(serial)){
+                // Display Error
+                if(usedNumbers.contains(serial))
+                    displayError(2);
+                else
+                    displayError(1);
                 return;
             }
             name = name.concat(itemName.getText());
             if(!parseTyping.enforceName(name)){
                 // display error
+                displayError(3);
                 return;
             }
             monetary = monetary.concat(monetaryValue.getText());
             if(!parseTyping.enforceMonetaryValue(monetary)){
                 // display error
+                displayError(4);
                 return;
             }
             Double doubleValue = Double.parseDouble(monetary);
             monetary = NumberFormat.getCurrencyInstance(new Locale("en", "US")).format(doubleValue);
         }
+        else{
+            displayError(6);
+            return;
+        }
 
         int index = table.getSelectionModel().getSelectedIndex();
         Item replacementItem = new Item("","","");
         replacementItem.setSerialNumber(serial);
+        usedNumbers.add(serial); // This serial number should not be duplicated.
         replacementItem.setName(name);
         replacementItem.setMonetaryValue(monetary);
         itemList.setItem(index, replacementItem);
@@ -181,13 +261,76 @@ public class InventoryManagementApplicationController {
     @FXML
     public void searchButtonPressed(ActionEvent event){
         // Changes focus to the item matching the specified search result. If not, display error message.
+        event.consume();
+        int index=-9999;
+        boolean found = false;
+        // If top button selected, search by serial number.
+        if(radioSelected == 1){
+            for(int i=0;i<itemList.getSize();i++) {
+                if(itemList.getItem(i).getSerialNumber().equals(searchField.getText())){
+                    index = i;
+                    System.out.println("one");
+                    found = true;
+                    break;
+                }
+            }
+        }
+        // If bottom button selected, search by name.
+        else if(radioSelected == 0){
+            for(int j=0;j<itemList.getSize();j++){
+                if(itemList.getItem(j).getName().equals(searchField.getText())){
+                    index = j;
+                    System.out.println("two");
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if(!found){
+            displayError(5);
+            return;
+        }
+        table.scrollTo(itemList.getItem(index));
+        table.getSelectionModel().select(itemList.getItem(index));
+        // Highlight the text in the search field.
+        searchField.requestFocus();
+        searchField.selectAll();
     }
 
 
     @FXML
     public void loadButtonPressed(ActionEvent event){
+        event.consume();
         // This method will allow the load button to function.
         // Will launch a file chooser to accomplish this.
+        FileIO load = new FileIO();
+        // Create the stage for the FileChooser.
+        Stage loadStage = new Stage();
+        // Set up the extension filters.
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("(TSV File)", "*.txt");
+        FileChooser.ExtensionFilter jsonFilter = new FileChooser.ExtensionFilter("(.json File)", "*.json");
+        FileChooser.ExtensionFilter htmlFilter = new FileChooser.ExtensionFilter("(.html File)", "*.html");
+        fileChooser.getExtensionFilters().add(txtFilter);
+        fileChooser.getExtensionFilters().add(jsonFilter);
+        fileChooser.getExtensionFilters().add(htmlFilter);
+        File file = fileChooser.showOpenDialog(loadStage);
+        if(file!=null){
+            itemList.removeAll();
+            if(file.getPath().contains(".html")){
+                // If an html file is selected, call this method.
+                load.readHTML(file, itemList);
+            }
+            else if(file.getPath().contains(".json")){
+                // If a .json file is selected, call this method.
+                load.readJson(file, itemList);
+            }
+            else{
+                // Process of elimination says TSV.
+                load.readTSV(file, itemList);
+            }
+        }
+
     }
 
     @FXML
@@ -196,7 +339,8 @@ public class InventoryManagementApplicationController {
         event.consume();
         ParseTyping typeCheck = new ParseTyping();
         // If all fields are not filled, or any field does not pass tests in ParseTyping,
-        if(serialNumber.getText()==null || itemName.getText()==null || monetaryValue.getText()==null){
+        if(serialNumber.getText().equals("") || itemName.getText().equals("") || monetaryValue.getText().equals("")){
+            displayError(6);
             return;
         }
         String serial;
@@ -205,19 +349,22 @@ public class InventoryManagementApplicationController {
         serial = serialNumber.getText();
         if(!typeCheck.enforceSerialNumber(serial) || usedNumbers.contains(serial)){
             // an error will be displayed.
-            System.err.println("PING 1!"); // REMOVE BEFORE FLIGHT!
+            if(usedNumbers.contains(serial))
+                displayError(2);
+            else
+                displayError(1);
             return;
         }
         name = itemName.getText();
         if(!typeCheck.enforceName(name)){
             // an error will be displayed.
-            System.err.println("PING 2!"); // REMOVE BEFORE FLIGHT!
+            displayError(3);
             return;
         }
         String preValue = monetaryValue.getText();
         if(!typeCheck.enforceMonetaryValue(preValue)){
             // an error will be displayed.
-            System.err.println("PING 3!"); // REMOVE BEFORE FLIGHT!
+            displayError(4);
             return;
         }
         // Convert the value to the appropriate format.
@@ -245,6 +392,8 @@ public class InventoryManagementApplicationController {
         serialColumn.setSortType(DESCENDING);
         table.setFixedCellSize(Region.USE_COMPUTED_SIZE);
         sortedList.comparatorProperty().bind(table.comparatorProperty());
+        Comparator<String> monetaryValueComparator = this.getComparator();
+        valueColumn.setComparator(monetaryValueComparator);
         // Will definitely want to change some of the values for the TableView, including the splash message.
     }
 }

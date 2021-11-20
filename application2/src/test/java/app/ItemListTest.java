@@ -21,8 +21,15 @@ class ItemListTest {
     void addItemTest() {
         // Assert that calling the addItem method actually adds an item to the list.
         itemListTest.addItem(test1);
-        // There should be only one item in the list, so set the index to zero.
+        // Stress test to the requirements!
+        for(int i=0;i<1024;i++){
+            // Items do not need to meet uniqueness requirements for this test.
+            Item newItem = new Item("A-000-000-000", "test", "7.25");
+            itemListTest.addItem(newItem);
+        }
+        // Set the item added matches for index zero. Also make sure the list can handle 1024 additions.
         assertEquals(test1, itemListTest.getItem(0));
+        assertEquals(1025, itemListTest.getSize());
     }
 
     @Test

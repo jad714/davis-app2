@@ -19,7 +19,7 @@ class ParseTypingTest {
         assertFalse(parseTest.enforceSerialNumber("1-AAA-aaa-BBB"));
         // Pass a passing String into the method.
         // Assert that it returns "true".
-        assertTrue(parseTest.enforceSerialNumber("A-222-111-111"));
+        assertTrue(parseTest.enforceSerialNumber("A-2c2-111-1as"));
     }
 
     @Test

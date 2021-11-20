@@ -17,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileIOTest {
 
-    File testDir;
+    private File testDir;
+    private String testHTMLOutput = "<table>\n\t<th>Serial Number</th><th>Name</th><th>Monetary Value</th>\n\t\t<tr>\n\t\t\t<td>A-000-000-000</td><td>test</td><td>$7.25</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>A-000-000-001</td><td>test2</td><td>$8.00</td>\n\t\t</tr>\n</table>";
 
     public String readFile(File testFile){
         // Attempt to read the file, line by line.
@@ -39,31 +40,32 @@ class FileIOTest {
 
     @Test
     void prepHTMLTest() {
+        // This test is part one of satisfying the requirement that users be able to save their list as HTML.
         FileIO ioTest = new FileIO();
-        // Create a test HTML file based on a created list of test items using the method.
         ItemList itemListTest = new ItemList();
+        // Create two items to add to the list (this verifies that the method can prep a multi-item HTML file).
         Item test1 = new Item("A-000-000-000", "test", "$7.25");
+        Item test2 = new Item("A-000-000-001", "test2", "$8.00");
         itemListTest.addItem(test1);
-        String testOutput = "<table>\n\t<th>Serial Number</th><th>Name</th><th>Monetary Value</th>\n\t\t<tr>\n\t\t\t<td>A-000-000-000</td><td>test</td><td>$7.25</td>\n\t\t</tr>\n</table>";
-        assertEquals(testOutput, ioTest.prepHTML(itemListTest));
-        // Assert that the created item exists. If not, fail the test.
-        // Read the created file and turn it back into an item.
-        // Assert that the reconstructed item matches the original item.
-        // Delete the created directory / file (keep the project clean).
+        itemListTest.addItem(test2);
+        // Create a test HTML String based on a created list of test items using the method.
+
+        assertEquals(testHTMLOutput, ioTest.prepHTML(itemListTest));
     }
 
     @Test
     void readHTMLTest() {
+        // This test ensures the application satisfies the requirement that users be able to load saved inventory lists.
         FileIO ioTest = new FileIO();
         ItemList testList = new ItemList();
         // Create a test HTML file.
-        String testOutput = "<table>\n\t<th>Serial Number</th><th>Name</th><th>Monetary Value</th>\n\t\t<tr>\n\t\t\t<td>A-000-000-000</td><td>test</td><td>$7.25</td>\n\t\t</tr>\n</table>";
         testDir = new File("test_data/");
         testDir.mkdir();
         File testFile = new File("test_data/test_html.html");
+        // Create a test file that should create the same information as the HTML file.
         try{
             PrintWriter writer = new PrintWriter(testFile);
-            writer.print(testOutput);
+            writer.print(testHTMLOutput);
             writer.close();
         }
         catch(IOException e){
@@ -72,24 +74,61 @@ class FileIOTest {
             testFile.delete();
             testDir.delete();
         }
-        // Create a test String that should create the same information as the HTML file.
         Item testItem = new Item("A-000-000-000", "test", "$7.25");
+        Item testItem2 = new Item("A-000-000-001", "test2", "$8.00");
+        // Read our created test file and puts the information in the test list.
         ioTest.readHTML(testFile, testList);
-        // Verify that the produced String matches the test item.
+        // Verify that the produced String matches the test items.
         assertEquals("A-000-000-000", testList.getItem(0).getSerialNumber());
         assertEquals("test", testList.getItem(0).getName());
         assertEquals("$7.25", testList.getItem(0).getMonetaryValue());
+        assertEquals("A-000-000-001", testList.getItem(1).getSerialNumber());
+        assertEquals("test2", testList.getItem(1).getName());
+        assertEquals("$8.00", testList.getItem(1).getMonetaryValue());
+        // Clean up the directory by deleting the created files / directories.
         testFile.delete();
         testDir.delete();
     }
 
     @Test
     void writeJsonTest() {
+        // This test ensures that the requirement that users be able to save their lists as .json files works.
         // Create a test Json file based on a created list of test items using the method.
-        // Assert that the created item exists. If not, fail the test.
+        ItemList listTest = new ItemList();
+        Item testItem = new Item("A-000-000-000", "test", "$7.25");
+        listTest.addItem(testItem);
+        Gson testGson = new Gson();
+        testDir = new File("test_data/");
+        testDir.mkdir();
+        File testFile = new File("test_data/test_json.json");
+        String filePath = "test_data/test_json.json";
+        FileIO ioTest = new FileIO();
+        ioTest.writeJson(testFile, listTest);
+        assertTrue(testFile.exists());
         // Read the created file and turn it back into an item.
-        // Assert that the reconstructed item matches the original item.
+        try{
+            Reader fileReader = Files.newBufferedReader(Paths.get(filePath));
+            // Create a list of objects to store json information in, scan the information using gson library.
+            // The list of objects will be contained in the "inventory" instance field due to the structure of the json file.
+            Item[] items = testGson.fromJson(fileReader, Item[].class);
+            listTest.removeAll();
+            for (Item item : items) {
+                listTest.addItem(item);
+            }
+            fileReader.close();
+        }
+        catch(IOException ex){
+            ex.printStackTrace();
+            System.err.println("Something's wrong with the test!");
+            fail();
+        }
+        // Run assertions to ensure the simple file was read correctly.
+        assertEquals(testItem.getSerialNumber(), listTest.getItem(0).getSerialNumber());
+        assertEquals(testItem.getName(), listTest.getItem(0).getName());
+        assertEquals(testItem.getMonetaryValue(), listTest.getItem(0).getMonetaryValue());
         // Delete the created directory / file (keep the project clean).
+        testFile.delete();
+        testDir.delete();
     }
 
     @Test
@@ -190,21 +229,50 @@ class FileIOTest {
     @Test
     void readTSVTest() {
         // Create a test TSV file.
+        testDir = new File("test_data/");
+        testDir.mkdir();
+        ItemList testList1 = new ItemList();
+        ItemList testList2 = new ItemList();
+        Item testItem = new Item("A-000-000-000", "test", "$7.25");
+        testList1.addItem(testItem);
+        File testFile = new File("test_data/test_tsv.txt");
+        try{
+            PrintWriter writer = new PrintWriter(testFile);
+            writer.println("Serial Number\tName\tMonetary Value");
+            for(int i=0;i<testList1.getSize();i++){
+                writer.printf("%s\t%s\t%s%n", testList1.getItem(i).getSerialNumber(), testList1.getItem(i).getName(), testList1.getItem(i).getMonetaryValue());
+            }
+            writer.flush();
+            writer.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+            fail();
+        }
+        FileIO ioTest = new FileIO();
+        ioTest.readTSV(testFile, testList2);
+        assertEquals(testList1.getItem(0).getSerialNumber(), testList2.getItem(0).getSerialNumber());
+        assertEquals(testList1.getItem(0).getName(), testList2.getItem(0).getName());
+        assertEquals(testList1.getItem(0).getMonetaryValue(), testList2.getItem(0).getMonetaryValue());
+        assertEquals(testList1.getSize(), testList2.getSize());
         // Create a test item that should create the same information as the HTML file.
         // Verify that the produced String matches the test item.
+        testFile.delete();
+        testDir.delete();
     }
 
     @Test
-    void writeFileTest(){
+    void writeHTMLTest(){
+        // This test is part two of satisfying the requirement of a user being able to save their lists to html.
         FileIO fileIOTest = new FileIO();
         // Verify the existence of a file matching the name supplied.
-        // Since the method is mostly self-testing this can be done according to its returned
-        // boolean value, and separately by ensuring the data copied is correct.
+        // This test method does not actually have to write an HTML formatted file correctly, all it does is write for the HTML method
+        // to reduce complexity.
         File testDir = new File("test_data/");
         testDir.mkdir();
         File testFile = new File("test_data/HelloWorld.txt");
         // Write the String to a file, creating a new one. Ensure method returns true with assertion.
-        fileIOTest.writeFile("Hello World", testFile);
+        fileIOTest.writeHTML("Hello World", testFile);
         assertTrue(testFile.exists());
         // Read the just created test file to ensure it copied the information correctly.
         String fileContent = this.readFile(testFile);

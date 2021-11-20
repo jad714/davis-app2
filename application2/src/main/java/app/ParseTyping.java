@@ -10,9 +10,9 @@ public class ParseTyping {
 
     public boolean enforceSerialNumber(String serialNumber){
         // Other methods will call this to verify input can be accepted.
-        // Method will enforce the format requirements of "A-XXX-XXX-XXX".
-        // Also disallows repeat serial numbers.
-        return serialNumber.matches("[a-zA-Z]-\\d{3}-\\d{3}-\\d{3}");
+        // Method will enforce the format requirements of "A-XXX-XXX-XXX" (X's can be any letter or digit).
+        // Repeat serial numbers are prevented by the calling method.
+        return serialNumber.matches("[a-zA-Z]-[a-zA-Z_0-9]{3}-[a-zA-Z_0-9]{3}-[a-zA-Z_0-9]{3}");
     }
 
     public boolean enforceName(String name){
