@@ -4,6 +4,8 @@ class InventoryManagementApplication{
 }
 
 class InventoryManagementApplicationController{
+    -getComparator():Comparator<String>
+    -displayError(int)
     +initialize()
 }
 
@@ -25,33 +27,41 @@ class Item{
 InventoryManagementApplicationController --o Item
 
 class ItemList{
-    -mainList
-    -size
+    -ObservableList<Item> mainList
+    -int size
     +ItemList()
     +addItem(Item)
     +removeItem(int)
+    +getItem(int):Item
+    +setItem(int, Item)
+    +getSize():int
+    +isListEmpty():boolean
     +getList():ObservableList<Item>
+    +removeAll()
 }
 
 InventoryManagementApplicationController --o ItemList
 
 class FileIO{
-    +writeHTML(String)
-    +readHTML():String
-    +writeJson(String)
-    +readJson():String
-    +writeTSV()(String)
-    +readTSV(String)
+    +prepHTML(ItemList):String
+    +writeHTML(String, File)
+    +readHTML(File, ItemList)
+    +writeJson(File, ItemLIst)
+    +readJson(File, ItemList)
+    +writeTSV(File, ItemList)
+    +readTSV(File, ItemList)
 }
 
 InventoryManagementApplicationController --o FileIO
 
 class ParseTyping{
+    -HashSet<String> usedNumbers
+    +isUsed(String):serial
+    +removeForEdit(String, int, ItemList)
     +enforceSerialNumber(String):boolean
     +enforceName(String):boolean
     +enforceMonetaryValue(String):boolean
-    +searchSerial(String):boolean
-    +searchName(String):boolean
+    +convertValue(String):String
 }
 
 InventoryManagementApplicationController --o ParseTyping

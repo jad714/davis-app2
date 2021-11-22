@@ -77,4 +77,13 @@ class ItemListTest {
         itemListTest.addItem(test3);
         assertEquals(test2, itemListTest.getItem(1));
     }
+
+    @Test
+    void setItemTest(){
+        // Verify an item in the list can be replaced using the setItem method.
+        itemListTest.addItem(test1);
+        // Replace test1 with test2 at index 0.
+        itemListTest.setItem(0, test2);
+        assertEquals(test2, itemListTest.getItem(0));
+    }
 }

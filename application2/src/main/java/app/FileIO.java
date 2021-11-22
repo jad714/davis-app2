@@ -3,6 +3,8 @@
  *  Copyright 2021 Joshua Davis
  */
 
+/* NOTE TO TA: I am aware of the SonarLint warning regarding \n. Please see the affected method for details as to why I left it. */
+
 package app;
 
 import com.google.gson.Gson;
@@ -19,17 +21,36 @@ import java.util.regex.Pattern;
 public class FileIO {
 
     public String prepHTML(ItemList list) {
+        String endStart = "</td><td>";
         String output = "<table>\n\t<th>Serial Number</th><th>Name</th><th>Monetary Value</th>\n\t";
         // Modifies the String to be written in HTML format.
         for(int i=0;i<list.getSize();i++){
             if(i+1 == list.getSize()){
-                output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + "</td><td>" + list.getItem(i).getName() + "</td><td>" + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>");
+                output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + endStart + list.getItem(i).getName() + endStart + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>");
                 break;
             }
-            output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + "</td><td>" + list.getItem(i).getName() + "</td><td>" + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>\n\t");
+            output = output.concat("\t<tr>\n\t\t\t<td>" + list.getItem(i).getSerialNumber() + endStart + list.getItem(i).getName() + endStart + list.getItem(i).getMonetaryValue() + "</td>\n\t\t</tr>\n\t");
         }
         output = output.concat("\n</table>");
         return output;
+    }
+
+    public void writeHTML(String output, File file){
+        /* This method specifically writes the prepped HTML file, as it is complex to prep. */
+        try{
+            // Create a new instance of the PrintWriter Class to write the output file.
+            PrintWriter fileWriter = new PrintWriter(file);
+            // Print the content of the to-do list to said file.
+            fileWriter.println(output);
+            // Close the PrintWriter.
+            fileWriter.close();
+        }
+        catch(IOException e)
+        {
+            // Catch the IOException (if anything went wrong with the FileChooser).
+            System.err.println("FATAL ERROR: Unable to write file.");
+            System.exit(0);
+        }
     }
 
     public void readHTML(File file, ItemList list) {
@@ -129,7 +150,8 @@ public class FileIO {
                 String name = list.getItem(i).getName();
                 String monetary = list.getItem(i).getMonetaryValue();
                 // Modify the output so that it fits the format requirements for a TSV.
-                writer.printf("%s\t%s\t%s%n", serial, name, monetary);
+                // NOTE: MUST ignore SonarLint warning about \n character here in order to comply with TSV requirements
+                writer.printf("%s\t%s\t%s\n", serial, name, monetary);
             }
             writer.close();
         }
@@ -166,24 +188,6 @@ public class FileIO {
         catch(IOException e){
             System.err.println("Something's wrong with the FileChooser!");
             e.printStackTrace();
-            System.exit(0);
-        }
-    }
-
-    public void writeHTML(String output, File file){
-        /* This method specifically writes the prepped HTML file, as it is complex to prep. */
-        try{
-            // Create a new instance of the PrintWriter Class to write the output file.
-            PrintWriter fileWriter = new PrintWriter(file);
-            // Print the content of the to-do list to said file.
-            fileWriter.println(output);
-            // Close the PrintWriter.
-            fileWriter.close();
-        }
-        catch(IOException e)
-        {
-            // Catch the IOException (if anything went wrong with the FileChooser).
-            System.err.println("FATAL ERROR: Unable to write file.");
             System.exit(0);
         }
     }

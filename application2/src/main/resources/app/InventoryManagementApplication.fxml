@@ -24,12 +24,12 @@
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="202.0" prefWidth="727.0">
          <children>
-            <Button layoutX="326.0" layoutY="11.0" mnemonicParsing="false" onAction="#addButtonPressed" text="Add" />
-            <Button layoutX="14.0" layoutY="12.0" mnemonicParsing="false" onAction="#removeSelectedPressed" text="Remove Selected" />
-            <Button layoutX="127.0" layoutY="12.0" mnemonicParsing="false" onAction="#removeAllButtonPressed" text="Remove All" />
-            <TextField fx:id="itemName" layoutX="326.0" layoutY="97.0" promptText="2-256 Characters" />
-            <TextField fx:id="serialNumber" layoutX="326.0" layoutY="56.0" promptText="A-XXX-XXX-XXX" />
-            <TextField fx:id="monetaryValue" layoutX="326.0" layoutY="137.0" promptText="U.S. Dollars" />
+            <Button layoutX="337.0" layoutY="169.0" mnemonicParsing="false" onAction="#addButtonPressed" text="Add" />
+            <Button layoutX="140.0" layoutY="12.0" mnemonicParsing="false" onAction="#removeSelectedPressed" text="Remove Selected" />
+            <Button layoutX="261.0" layoutY="12.0" mnemonicParsing="false" onAction="#removeAllButtonPressed" text="Remove All" />
+            <TextField fx:id="itemName" layoutX="334.0" layoutY="98.0" promptText="2-256 Characters" />
+            <TextField fx:id="serialNumber" layoutX="334.0" layoutY="56.0" promptText="A-XXX-XXX-XXX" />
+            <TextField fx:id="monetaryValue" layoutX="334.0" layoutY="137.0" promptText="U.S. Dollars" />
             <TextField fx:id="searchField" layoutX="170.0" layoutY="104.0" promptText="Search for an Item..." />
             <Button layoutX="218.0" layoutY="137.0" mnemonicParsing="false" onAction="#searchButtonPressed" text="Search" />
             <RadioButton fx:id="searchBySerial" layoutX="170.0" layoutY="60.0" mnemonicParsing="false" onAction="#radioButtons" selected="true" text="Search by Serial Number">
@@ -38,14 +38,14 @@
                </toggleGroup>
             </RadioButton>
             <RadioButton fx:id="searchByName" layoutX="170.0" layoutY="81.0" mnemonicParsing="false" onAction="#radioButtons" text="Search by Name" toggleGroup="$SearchGroup" />
-            <Button layoutX="375.0" layoutY="12.0" mnemonicParsing="false" onAction="#editSelectedButtonPressed" text="Edit Selected" />
+            <Button layoutX="396.0" layoutY="169.0" mnemonicParsing="false" onAction="#editSelectedButtonPressed" text="Edit Selected" />
             <Label fx:id="feedbackLabel" focusTraversable="false" layoutX="4.0" layoutY="150.0" prefHeight="42.0" prefWidth="149.0" text="Label" textFill="RED" visible="false" />
             <Button layoutX="14.0" layoutY="65.0" mnemonicParsing="false" onAction="#saveAsButtonPressed" text="Save As..." />
             <Button layoutX="14.0" layoutY="104.0" mnemonicParsing="false" onAction="#loadButtonPressed" text="Load Inventory" />
-            <Label layoutX="363.0" layoutY="40.0" prefHeight="5.0" prefWidth="76.0" text="Serial Number" />
-            <Label layoutX="371.0" layoutY="82.0" text="Item Name" />
-            <Label layoutX="359.0" layoutY="120.0" text="Monetary Value" />
-            <Label layoutX="14.0" layoutY="129.0" prefHeight="17.0" prefWidth="126.0" text="Errors / Messages:" />
+            <Label layoutX="371.0" layoutY="37.0" prefHeight="5.0" prefWidth="76.0" text="Serial Number" />
+            <Label layoutX="379.0" layoutY="81.0" text="Item Name" />
+            <Label layoutX="367.0" layoutY="120.0" text="Monetary Value" />
+            <Label layoutX="14.0" layoutY="135.0" prefHeight="17.0" prefWidth="126.0" text="Errors / Messages:" />
          </children></AnchorPane>
   </items>
 </SplitPane>

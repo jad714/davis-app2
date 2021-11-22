@@ -20,6 +20,7 @@ class FileIOTest {
     private File testDir;
     private String testHTMLOutput = "<table>\n\t<th>Serial Number</th><th>Name</th><th>Monetary Value</th>\n\t\t<tr>\n\t\t\t<td>A-000-000-000</td><td>test</td><td>$7.25</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>A-000-000-001</td><td>test2</td><td>$8.00</td>\n\t\t</tr>\n</table>";
 
+    // This is a utility method used by one of the test methods.
     public String readFile(File testFile){
         // Attempt to read the file, line by line.
         try{
@@ -34,8 +35,9 @@ class FileIOTest {
         // Return "error" if unable to read. This should cause saveFileTest to fail.
         catch(FileNotFoundException e){
             System.err.println("Could not locate file!");
-            return "error";
+            fail();
         }
+        return "error";
     }
 
     @Test
