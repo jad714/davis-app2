@@ -66,6 +66,9 @@ a message that no matching item was found will be displayed (See "Errors / Messa
 be exact matches. For user convenience, the search field is focused and the text automatically selected for ease of revision, should the user decide
 they wish to search for a different match.
 
+It should also be noted that the search will return the FIRST MATCH for the item. It is recommended that if a unique item is being sought, the user utilize
+the "Search by Serial Number" function.
+
 V. Removing Items From the List:
 --------------------------------
 

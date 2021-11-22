@@ -100,7 +100,7 @@ public class InventoryManagementApplicationController {
             // The fourth case handles the case where a user enters an incorrect monetary value (non-numeric characters are entered besides a decimal).
             case 4 -> {
                 feedbackLabel.setTextFill(Paint.valueOf(RED));
-                feedbackLabel.setText("Add/Edit Error: Monetary value must be numeric!");
+                feedbackLabel.setText("Add/Edit Error: Monetary value must be positive numeric!");
                 feedbackLabel.setWrapText(true);
                 feedbackLabel.setVisible(true);
             }
