@@ -85,6 +85,6 @@ class ParseTypingTest {
         assertEquals("$7.25", parseTest.convertValue("7.25"));
         // Pass in a value that is of correct format for the method, but not the final String.
         // Assert the chop was carried out successfully.
-        assertEquals("$7.25", parseTest.convertValue("7.2468"));
+        assertEquals("$7.25", parseTest.convertValue("7.2568"));
     }
 }
