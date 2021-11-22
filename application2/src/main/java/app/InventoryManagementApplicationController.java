@@ -367,6 +367,7 @@ public class InventoryManagementApplicationController {
         // If the file is not null, load the file.
         if(file!=null){
             itemList.removeAll();
+            typeCheck.usedNumbers.clear();
             if(file.getPath().contains(".html")){
                 // If an html file is selected, call this method.
                 load.readHTML(file, itemList);
