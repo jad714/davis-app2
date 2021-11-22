@@ -44,7 +44,7 @@ public class ParseTyping {
         // If the try/catch passes, it will round to two decimal places and convert the number to a String.
         // If the try/catch fails, will return "false," disallowing the input.
         try{
-            if(Double.parseDouble(monetaryValue)>0){
+            if(Double.parseDouble(monetaryValue)>=0){
                 return true;
             }
         }

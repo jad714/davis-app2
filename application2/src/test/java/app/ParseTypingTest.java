@@ -75,6 +75,7 @@ class ParseTypingTest {
         // Pass a passing String into the method.
         // Assert that it returns "true".
         assertTrue(parseTest.enforceMonetaryValue("7.25"));
+        assertFalse(parseTest.enforceMonetaryValue("-7.25"));
     }
 
     @Test
