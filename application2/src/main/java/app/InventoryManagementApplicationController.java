@@ -142,6 +142,13 @@ public class InventoryManagementApplicationController {
         feedbackLabel.setVisible(false);
     }
 
+    public void updateBlacklist(){
+        // Is called by load method to add all loaded items to the blacklist.
+        for(int i=0;i<itemList.getSize();i++){
+            typeCheck.usedNumbers.add(itemList.getItem(i).getSerialNumber());
+        }
+    }
+
     @FXML
     public void radioButtons(ActionEvent event){
         // Dictate the behavior of the radio buttons.
@@ -380,6 +387,7 @@ public class InventoryManagementApplicationController {
                 // Process of elimination says TSV.
                 load.readTSV(file, itemList);
             }
+            this.updateBlacklist();
         }
     }
 
